@@ -10,8 +10,9 @@ import (
 
 func Start() {
 
-	// wiring
-	repos := domain.NewCustomerRepositoryStub()
+	// wiring alternatively, the Stub or the db
+	// repos := domain.NewCustomerRepositoryStub()
+	repos := domain.NewCustomerRepositoryDb()
 
 	serv := service.NewService(repos)
 
