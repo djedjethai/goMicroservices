@@ -21,6 +21,7 @@ func Start() {
 	// mux := http.NewServeMux() // standart http multiplexer
 	router := mux.NewRouter()
 	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
+	// the regex make sure only int can be passed as param, but are string when mux extract
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
 
 	// method masher
