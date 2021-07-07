@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"github.com/djedjethai/banking/service"
 	"net/http"
+	"strconv"
 )
 
 type Customer struct {
@@ -17,7 +18,7 @@ type customerHandlers struct {
 	service service.CustomerService
 }
 
-func (s *customerHandlers) GetAllCustomers(w http.ResponseWriter, r *http.Request) {
+func (s *customerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
 
 	customers, _ := s.service.GetAllCustomer()
 
@@ -34,10 +35,22 @@ func (s *customerHandlers) GetAllCustomers(w http.ResponseWriter, r *http.Reques
 // 	fmt.Fprint(w, "hello World")
 // }
 
-//  func getCustomer(w http.ResponseWriter, r *http.Request) {
-//  	vars := mux.Vars(r)
-//  	fmt.Fprint(w, vars["customer_id"])
-//  }
+func (s *customerHandlers) getCustomer(w http.ResponseWriter, r *http.Request) {
+	// parse the segment(the params..)
+	vars := mux.Vars(r)
+	id := vars["customer_id"]
+
+	idInt, _ := strconv.Itoa()
+
+	customer, err := s.ById(idInt)
+	if err != nil {
+		w.StatusCode(http.StatusNotFound)
+		fmt.Fprintf(w, err.Error())
+	} else {
+		w.Header().Add("Content-type", "application/json")
+		json.NewEncoder(w).Encode(customer)
+	}
+}
 
 // func createCustomer(w http.ResponseWriter, r *http.Request) {
 // 	fmt.Fprint(w, "post req received")
