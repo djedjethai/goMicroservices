@@ -23,7 +23,6 @@ func Start() {
 	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 	// the regex make sure only int can be passed as param, but are string when mux extract
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
-
 	// method masher
 	// router.HandleFunc("/greet", greet).Methods(http.MethodGet)
 	// req masher customer_id must be int
