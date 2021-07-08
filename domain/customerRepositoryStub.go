@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/djedjethai/banking/errs"
+
 type CustomerRepositoryStub struct {
 	customers []Customer
 }
@@ -13,6 +15,6 @@ func NewCustomerRepositoryStub() *CustomerRepositoryStub {
 	return &CustomerRepositoryStub{customers}
 }
 
-func (s *CustomerRepositoryStub) FindAll() ([]Customer, error) {
+func (s *CustomerRepositoryStub) FindAll() ([]Customer, *errs.AppError) {
 	return s.customers, nil
 }

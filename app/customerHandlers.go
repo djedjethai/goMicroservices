@@ -2,7 +2,7 @@ package app
 
 import (
 	"encoding/json"
-	"encoding/xml"
+	// "encoding/xml"
 	"github.com/djedjethai/banking/service"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -20,20 +20,21 @@ type customerHandlers struct {
 
 func (s *customerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
 
-	customers, _ := s.service.GetAllCustomer()
-
-	if r.Header.Get("content-type") == "application/xml" {
-		w.Header().Add("Content-type", "application/xml")
-		xml.NewEncoder(w).Encode(customers)
+	customers, err := s.service.GetAllCustomer()
+	if err != nil {
+		writeResponse(w, err.Code, err.AsMessage())
 	} else {
-		w.Header().Add("Content-type", "application/json") // otherwise its text/plain
-		json.NewEncoder(w).Encode(customers)
+		writeResponse(w, http.StatusOK, customers)
 	}
-}
 
-// func greet(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprint(w, "hello World")
-// }
+	// if r.Header.Get("content-type") == "application/xml" {
+	// 	w.Header().Add("Content-type", "application/xml")
+	// 	xml.NewEncoder(w).Encode(customers)
+	// } else {
+	// 	w.Header().Add("Content-type", "application/json") // otherwise its text/plain
+	// 	json.NewEncoder(w).Encode(customers)
+	// }
+}
 
 func (s *customerHandlers) getCustomer(w http.ResponseWriter, r *http.Request) {
 	// parse the segment(the params..)
