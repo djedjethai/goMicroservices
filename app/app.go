@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/djedjethai/banking/domain"
-	"github.com/djedjethai/banking/service"
+	"github.com/djedjethai/bankingSqlx/domain"
+	"github.com/djedjethai/bankingSqlx/service"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -11,8 +11,8 @@ import (
 func Start() {
 
 	// wiring alternatively, the Stub or the db
-	repos := domain.NewCustomerRepositoryStub()
-	// repos := domain.NewCustomerRepositoryDb()
+	// repos := domain.NewCustomerRepositoryStub()
+	repos := domain.NewCustomerRepositoryDb()
 
 	serv := service.NewService(repos)
 

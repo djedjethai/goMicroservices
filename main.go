@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/djedjethai/banking/app"
-	"github.com/djedjethai/banking/logger"
+	"github.com/djedjethai/bankingSqlx/app"
+	"github.com/djedjethai/bankingSqlx/logger"
 	// "log"
 )
 

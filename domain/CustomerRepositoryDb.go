@@ -2,14 +2,15 @@ package domain
 
 import (
 	"database/sql"
-	"github.com/djedjethai/banking/errs"
+	"github.com/djedjethai/bankingSqlx/errs"
+	"github.com/djedjethai/bankingSqlx/logger"
 	_ "github.com/go-sql-driver/mysql"
-	"log"
+	"github.com/jmoiron/sqlx"
 	"time"
 )
 
 type CustomerRepositoryDb struct {
-	client *sql.DB
+	client *sqlx.DB
 }
 
 func NewCustomerRepositoryDb() *CustomerRepositoryDb {
@@ -17,7 +18,7 @@ func NewCustomerRepositoryDb() *CustomerRepositoryDb {
 	c := new(CustomerRepositoryDb)
 
 	var err error
-	c.client, err = sql.Open("mysql", "root:root@tcp(localhost:3306)/banking")
+	c.client, err = sqlx.Open("mysql", "root:root@tcp(localhost:3306)/banking")
 	if err != nil {
 		panic(err)
 	}
@@ -30,33 +31,31 @@ func NewCustomerRepositoryDb() *CustomerRepositoryDb {
 }
 
 func (cl *CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
-
-	var rows *sql.Rows
 	var err error
+
+	customers := make([]Customer, 0)
 	if status == "" {
 		findAllSql := "select customer_id, name, city, zipcode, date_of_birth, status from customers"
-		rows, err = cl.client.Query(findAllSql)
+		// select from sqlx retreive the rows from db
+		// it also marshall this retreive rows into our domain object
+		err = cl.client.Select(&customers, findAllSql)
 	} else {
 		findAllSql := "select customer_id, name, city, zipcode, date_of_birth, status from customers where status = ?"
-		rows, err = cl.client.Query(findAllSql, status)
+		err = cl.client.Select(&customers, findAllSql, status)
 	}
 
 	if err != nil {
-		log.Println("Error while quering cutomer table" + err.Error())
+		logger.Error("Error while quering cutomer table" + err.Error())
 		return nil, errs.NewInternalServerError("Unexpected database error")
 	}
 
-	customers := make([]Customer, 0)
-	for rows.Next() {
-		var c Customer
-		if err := rows.Scan(&c.Id, &c.Name, &c.City, &c.ZipCode, &c.DateOfBirth, &c.Status); err != nil {
-			log.Println("Error while scanning cutomers" + err.Error())
-			return nil, errs.NewInternalServerError("Unexpected database error")
+	// no need anymore as we use Select which manage all
+	// err = sqlx.StructScan(rows, &customers)
+	// if err != nil {
+	// 	logger.Error("Error while scanning cutomers" + err.Error())
+	// 	return nil, errs.NewInternalServerError("Unexpected database error")
 
-		}
-
-		customers = append(customers, c)
-	}
+	// }
 
 	return customers, nil
 }
@@ -64,15 +63,13 @@ func (cl *CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppErr
 func (cl *CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
 
 	customerSql := "select customer_id, name, city, zipcode, date_of_birth, status from customers where customer_id = ?"
-	row := cl.client.QueryRow(customerSql, id)
 
 	var c Customer
-	if err := row.Scan(&c.Id, &c.Name, &c.City, &c.ZipCode, &c.DateOfBirth, &c.Status); err != nil {
-		// manage the err, this method is from sql module
+	if err := cl.client.Get(&c, customerSql, id); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errs.NewNotFoundError("customer not found")
 		} else {
-			log.Println("Error while scanning cutomers" + err.Error())
+			logger.Error("Error while scanning cutomers" + err.Error())
 			return nil, errs.NewInternalServerError("Unexpected database error")
 		}
 	}

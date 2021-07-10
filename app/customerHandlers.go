@@ -3,7 +3,8 @@ package app
 import (
 	"encoding/json"
 	// "encoding/xml"
-	"github.com/djedjethai/banking/service"
+	"github.com/djedjethai/bankingSqlx/logger"
+	"github.com/djedjethai/bankingSqlx/service"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -57,6 +58,7 @@ func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Add("Content-type", "application/json")
 	w.WriteHeader(code)
 	if err := json.NewEncoder(w).Encode(data); err != nil {
+		logger.Error("Error when writer encode data")
 		panic(err)
 	}
 }

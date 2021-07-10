@@ -2,6 +2,7 @@ package logger
 
 import (
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 var log *zap.Logger
@@ -13,7 +14,8 @@ func init() {
 
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.TimeKey = "timestamp"
-	// encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder // zapcore is undefined ??
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	encoderConfig.StacktraceKey = ""
 	config.EncoderConfig = encoderConfig
 
 	// with the config, instead of the following line
