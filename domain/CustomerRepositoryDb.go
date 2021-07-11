@@ -2,10 +2,12 @@ package domain
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/djedjethai/bankingSqlx/errs"
 	"github.com/djedjethai/bankingSqlx/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"os"
 	"time"
 )
 
@@ -17,8 +19,16 @@ func NewCustomerRepositoryDb() *CustomerRepositoryDb {
 
 	c := new(CustomerRepositoryDb)
 
+	// this env var must be sanityCheck() (place it in app.go)
+	dbUser := os.Getenv("DB_USER")
+	dbPasswd := os.Getenv("DB_PASSWD")
+	dbAddr := os.Getenv("DB_ADDR")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+
 	var err error
-	c.client, err = sqlx.Open("mysql", "root:root@tcp(localhost:3306)/banking")
+	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPasswd, dbAddr, dbPort, dbName)
+	c.client, err = sqlx.Open("mysql", dataSource)
 	if err != nil {
 		panic(err)
 	}

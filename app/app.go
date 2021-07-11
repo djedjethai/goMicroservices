@@ -1,14 +1,31 @@
 package app
 
 import (
+	"fmt"
 	"github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/service"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
 )
 
+func sanityCheck() {
+	if os.Getenv("SERVER_ADDRESS") == "" ||
+		os.Getenv("SERVER_PORT") == "" ||
+		os.Getenv("DB_USER") == "" ||
+		os.Getenv("DB_PASSWD") == "" ||
+		os.Getenv("DB_ADDR") == "" ||
+		os.Getenv("DB_PORT") == "" ||
+		os.Getenv("DB_NAME") == "" {
+		log.Fatal("environment variable not define")
+	}
+}
+
 func Start() {
+
+	//to make sure the env var are here
+	sanityCheck()
 
 	// wiring alternatively, the Stub or the db
 	// repos := domain.NewCustomerRepositoryStub()
@@ -30,6 +47,8 @@ func Start() {
 
 	// router.HandleFunc("/customers/{customer_id:[0-9]+}", getCustomer).Methods(http.MethodGet)
 
-	log.Fatal(http.ListenAndServe("localhost:8000", router))
+	address := os.Getenv("SERVER_ADDRESS")
+	port := os.Getenv("PORT")
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router))
 
 }
