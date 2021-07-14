@@ -14,6 +14,11 @@ type Customer struct {
 	Status      string
 }
 
+type CustomerRepository interface {
+	FindAll(string) ([]Customer, *errs.AppError)
+	ById(string) (*Customer, *errs.AppError)
+}
+
 func (c Customer) statusAsText() string {
 	statusAsText := "active"
 	if c.Status == "0" {
@@ -33,9 +38,4 @@ func (c Customer) ToDto() dto.CustomerResponse {
 		DateOfBirth: c.DateOfBirth,
 		Status:      c.statusAsText(),
 	}
-}
-
-type CustomerRepository interface {
-	FindAll(string) ([]Customer, *errs.AppError)
-	ById(string) (*Customer, *errs.AppError)
 }

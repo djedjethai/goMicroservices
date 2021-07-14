@@ -2,45 +2,24 @@ package domain
 
 import (
 	"database/sql"
-	"fmt"
+	// "fmt"
 	"github.com/djedjethai/bankingSqlx/errs"
 	"github.com/djedjethai/bankingSqlx/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"os"
-	"time"
+	// "time"
 )
 
 type CustomerRepositoryDb struct {
 	client *sqlx.DB
 }
 
-func NewCustomerRepositoryDb() *CustomerRepositoryDb {
+func NewCustomerRepositoryDb(dbClient *sqlx.DB) CustomerRepositoryDb {
 
-	c := new(CustomerRepositoryDb)
-
-	// this env var must be sanityCheck() (place it in app.go)
-	dbUser := os.Getenv("DB_USER")
-	dbPasswd := os.Getenv("DB_PASSWD")
-	dbAddr := os.Getenv("DB_ADDR")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
-
-	var err error
-	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPasswd, dbAddr, dbPort, dbName)
-	c.client, err = sqlx.Open("mysql", dataSource)
-	if err != nil {
-		panic(err)
-	}
-	// See "Important settings" section.
-	c.client.SetConnMaxLifetime(time.Minute * 3)
-	c.client.SetMaxOpenConns(10)
-	c.client.SetMaxIdleConns(10)
-
-	return c
+	return CustomerRepositoryDb{dbClient}
 }
 
-func (cl *CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
+func (cl CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
 	var err error
 
 	customers := make([]Customer, 0)
@@ -70,7 +49,7 @@ func (cl *CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppErr
 	return customers, nil
 }
 
-func (cl *CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
+func (cl CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
 
 	customerSql := "select customer_id, name, city, zipcode, date_of_birth, status from customers where customer_id = ?"
 

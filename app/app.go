@@ -5,6 +5,7 @@ import (
 	"github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/service"
 	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
 	"log"
 	"net/http"
 	"os"
@@ -27,19 +28,24 @@ func Start() {
 	//to make sure the env var are here
 	sanityCheck()
 
+	dbClient := getDbClient()
 	// wiring alternatively, the Stub or the db
 	// repos := domain.NewCustomerRepositoryStub()
-	repos := domain.NewCustomerRepositoryDb()
+	customerRepositoryDb := domain.NewCustomerRepositoryDb(dbClient)
+	accountRepositoryDb := domain.NewAccountRepositoryDb(dbClient)
 
-	serv := service.NewService(repos)
+	customerServ := service.NewService(customerRepositoryDb)
+	accountServ := service.NewAccountService(accountRepositoryDb)
 
-	ch := customerHandlers{serv}
+	ch := customerHandlers{customerServ}
+	ah := accountHandlers{accountServ}
 
 	// mux := http.NewServeMux() // standart http multiplexer
 	router := mux.NewRouter()
 	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 	// the regex make sure only int can be passed as param, but are string when mux extract
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{customer_id:[0-9]+/account}", ah.postAccount).Methods(http.MethodPost)
 	// method masher
 	// router.HandleFunc("/greet", greet).Methods(http.MethodGet)
 	// req masher customer_id must be int
@@ -48,7 +54,29 @@ func Start() {
 	// router.HandleFunc("/customers/{customer_id:[0-9]+}", getCustomer).Methods(http.MethodGet)
 
 	address := os.Getenv("SERVER_ADDRESS")
-	port := os.Getenv("PORT")
+	port := os.Getenv("SERVER_PORT")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router))
 
+}
+
+func getDbClient() *sqlx.DB {
+	// this env var must be sanityCheck() (place it in app.go)
+	dbUser := os.Getenv("DB_USER")
+	dbPasswd := os.Getenv("DB_PASSWD")
+	dbAddr := os.Getenv("DB_ADDR")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+
+	var err error
+	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPasswd, dbAddr, dbPort, dbName)
+	c.client, err = sqlx.Open("mysql", dataSource)
+	if err != nil {
+		panic(err)
+	}
+	// See "Important settings" section.
+	c.client.SetConnMaxLifetime(time.Minute * 3)
+	c.client.SetMaxOpenConns(10)
+	c.client.SetMaxIdleConns(10)
+
+	return client
 }
