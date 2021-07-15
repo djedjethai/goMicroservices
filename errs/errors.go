@@ -15,6 +15,13 @@ func (e *AppError) AsMessage() *AppError {
 	}
 }
 
+func NewBadRequestError(message string) *AppError {
+	return &AppError{
+		Code:    http.StatusBadRequest,
+		Message: message,
+	}
+}
+
 func NewNotFoundError(message string) *AppError {
 	return &AppError{
 		Code:    http.StatusNotFound,

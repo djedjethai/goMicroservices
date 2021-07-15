@@ -34,12 +34,15 @@ func Start() {
 	// repos := domain.NewCustomerRepositoryStub()
 	customerRepositoryDb := domain.NewCustomerRepositoryDb(dbClient)
 	accountRepositoryDb := domain.NewAccountRepositoryDb(dbClient)
+	transactionRepositoryDb := domain.NewTransactionRepositoryDb(dbClient)
 
 	customerServ := service.NewService(customerRepositoryDb)
 	accountServ := service.NewAccountService(accountRepositoryDb)
+	transactionServ := service.NewTransactionService(transactionRepositoryDb)
 
 	ch := customerHandlers{customerServ}
 	ah := accountHandlers{accountServ}
+	th := transactionHandlers{transactionServ}
 
 	// mux := http.NewServeMux() // standart http multiplexer
 	router := mux.NewRouter()
@@ -47,6 +50,7 @@ func Start() {
 	// the regex make sure only int can be passed as param, but are string when mux extract
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.postAccount).Methods(http.MethodPost)
+	router.HandleFunc("/customers/{account_id:[0-9]+}/transaction", th.postTransaction).Methods(http.MethodPost)
 	// method masher
 	// router.HandleFunc("/greet", greet).Methods(http.MethodGet)
 	// req masher customer_id must be int
