@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func sanityCheck() {
@@ -45,7 +46,7 @@ func Start() {
 	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 	// the regex make sure only int can be passed as param, but are string when mux extract
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{customer_id:[0-9]+/account}", ah.postAccount).Methods(http.MethodPost)
+	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.postAccount).Methods(http.MethodPost)
 	// method masher
 	// router.HandleFunc("/greet", greet).Methods(http.MethodGet)
 	// req masher customer_id must be int
@@ -67,16 +68,16 @@ func getDbClient() *sqlx.DB {
 	dbPort := os.Getenv("DB_PORT")
 	dbName := os.Getenv("DB_NAME")
 
-	var err error
+	// var err error
 	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPasswd, dbAddr, dbPort, dbName)
-	c.client, err = sqlx.Open("mysql", dataSource)
+	client, err := sqlx.Open("mysql", dataSource)
 	if err != nil {
 		panic(err)
 	}
 	// See "Important settings" section.
-	c.client.SetConnMaxLifetime(time.Minute * 3)
-	c.client.SetMaxOpenConns(10)
-	c.client.SetMaxIdleConns(10)
+	client.SetConnMaxLifetime(time.Minute * 3)
+	client.SetMaxOpenConns(10)
+	client.SetMaxIdleConns(10)
 
 	return client
 }

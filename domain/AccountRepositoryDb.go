@@ -17,9 +17,10 @@ func NewAccountRepositoryDb(dbClient *sqlx.DB) AccountRepositoryDb {
 }
 
 func (cl AccountRepositoryDb) Save(a Account) (*Account, *errs.AppError) {
+
 	sqlInsert := "INSERT INTO accounts (customer_id, opening_date, account_type, amount, status) values (?, ?, ?, ?, ?)"
 
-	result, err := cl.client.Exec(sqlInsert, a.AccountId, a.CustomerId, a.OpeningDate, a.AccountType, a.Amount, a.Status)
+	result, err := cl.client.Exec(sqlInsert, a.CustomerId, a.OpeningDate, a.AccountType, a.Amount, a.Status)
 	if err != nil {
 		logger.Error("Error while creating an account: " + err.Error())
 		return nil, errs.NewInternalServerError("Unexpected error from the database")
