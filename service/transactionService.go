@@ -6,7 +6,7 @@ import (
 )
 
 type TransactionService interface {
-	HandleTransaction() (dto.NewTransactionResponse, errs.AppError)
+	HandleTransaction() (dto.NewTransactionResponse, *errs.AppError)
 }
 
 type TransactionRepository interface {
@@ -15,8 +15,8 @@ type TransactionRepository interface {
 
 type AccountRepository interface {
 	// add this 2 method to account serviceDb
-	GetAmount(string) float64
-	UpdateAmount(float64) errs.AppError
+	GetBalance(string) (float64, errs.AppError)
+	UpdateAccountAmount(float64) errs.AppError
 }
 
 type transactionService struct {
@@ -27,16 +27,21 @@ func NewTransactionService(transacDb domain.Transaction) *TransactionService {
 	return &transactionService{transacDb}
 }
 
-func (s *transactionService) HandleTransaction() (dto.NewAccountResponse, errs.AppError) {
+func (s *transactionService) HandleTransaction(t dto.NewTransactionRequest) (*dto.NewAccountResponse, *errs.AppError) {
+
+	// check if withdrawal or deposit
+	if 
 
 	// req account balance from account service
 
-	// make sure the account amount(from accountdb) is enought
+	// make sure the account amount(from accountdb) is ok
 
-	// run transaction in db in transaction service
+
+	// transform type from dto to Transaction
+	// update transaction table in transaction service
 	// return transactionId
 
 	// calcule the new amount and save to accountdb
 
-	// return
+	// return updatedBalance + transactionId
 }

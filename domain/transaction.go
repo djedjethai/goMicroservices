@@ -1,13 +1,15 @@
 package domain
 
-import (
-	"time"
-)
+import "github.com/djedjethai/bankingSqlx/errs"
 
 type Transaction struct {
 	TransactionId   string
 	AccountId       string
 	Amount          float64
 	TransactionType string
-	TransactionDate time.Date
+	TransactionDate string
+}
+
+type TransactionRepository interface {
+	UpdateTransactionTable(Transaction) (string, errs.AppError)
 }

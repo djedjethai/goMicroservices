@@ -28,6 +28,8 @@ func (s *transactionHandlers) postTransaction(w http.ResponseWriter, r *http.Req
 
 	// link to the service part
 	transactionReq.AccountId = accountId
-	// .............
+	// service.Transaction.HandleTransaction(transactionReq) (dto.NewAccountResponse, errs.AppError) {
+
+}
 
 }
