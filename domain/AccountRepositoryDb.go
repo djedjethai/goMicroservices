@@ -54,10 +54,10 @@ func (cl AccountRepositoryDb) GetBalance(an string) (float64, *errs.AppError) {
 	return balance, nil
 }
 
-func (cl TransactionRepositoryDb) UpdateAccountAmount(aid string, a float64) *errs.AppError {
+func (cl TransactionRepositoryDb) UpdateAccountAmount(na Transaction) *errs.AppError {
 	updateSql := "UPDATE accounts SET amount = ? WHERE account_id = ?"
 
-	_, err := cl.client.Exec(updateSql, a, aid)
+	_, err := cl.client.Exec(updateSql, na.Amount, na.AccountId)
 	if err != nil {
 		logger.Error("err while updating account" + err.Error())
 		return errs.NewInternalServerError("Unexpected database error")

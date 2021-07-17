@@ -16,6 +16,8 @@ type Account struct {
 
 type AccountRepository interface {
 	Save(Account) (*Account, *errs.AppError)
+	GetBalance(string) (float64, *errs.AppError)
+	UpdateAccountAmount(Transaction) *errs.AppError
 }
 
 func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {

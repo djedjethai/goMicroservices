@@ -1,12 +1,19 @@
 package service
 
 import (
+	"github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/dto"
 	"github.com/djedjethai/bankingSqlx/errs"
+	"time"
 )
 
 type TransactionService interface {
-	HandleTransaction() (dto.NewTransactionResponse, *errs.AppError)
+	HandleTransaction(dto.NewTransactionRequest) (dto.NewTransactionResponse, *errs.AppError)
+}
+
+type AccountRepository interface {
+	GetBalance(string) (float64, *errs.AppError)
+	UpdateAccountAmount(domain.Transaction) *errs.AppError
 }
 
 type TransactionRepository interface {
@@ -29,19 +36,45 @@ func NewTransactionService(transacDb domain.Transaction) *TransactionService {
 
 func (s *transactionService) HandleTransaction(t dto.NewTransactionRequest) (*dto.NewAccountResponse, *errs.AppError) {
 
-	// check if withdrawal or deposit
-	if 
-
 	// req account balance from account service
+	balance, err := domain.GetBalance(t.AccountId)
+	if err != nil {
+		return nil, err
+	}
 
-	// make sure the account amount(from accountdb) is ok
+	var newAmount float64
+	if dt.TransactionType == "withdrawal" {
+		if balance < t.Amount {
+			return nil, errs.NewBadRequestError("Account found insufisant")
+		}
+		newAmount = balance - t.Amount
+	} else if dt.TransactionType == "deposit" {
+		newAmount = balance + t.Amount
+	} else {
+		return nil, errs.NewBadRequestError("wrong parameter")
+	}
 
+	if err := domain.UpdateAccountAmount(newAmount); err != nil {
+		return nil, errs.NewInternalServerError("Unexpected database error")
+	}
 
-	// transform type from dto to Transaction
-	// update transaction table in transaction service
-	// return transactionId
+	dt := domain.Transaction{
+		TransactionId:   "",
+		AccountId:       t.AccountId,
+		Amount:          t.Amount,
+		TransactionType: t.TransactionType,
+		TransactionDate: time.Now().Format("2006-01-02 15:04:05"),
+	}
 
-	// calcule the new amount and save to accountdb
+	transactionId, err := domain.UpdateTransactionTable(dt)
+	if err != nil {
+		return nil, errs.NewInternalServerError("Unexpected database error")
+	}
 
-	// return updatedBalance + transactionId
+	dtoResp := dto.NewTransactionResponse{
+		Amount:        newAmout,
+		TransactionId: transactionId,
+	}
+
+	return dtoResp, nil
 }

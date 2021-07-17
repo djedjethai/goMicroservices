@@ -5,7 +5,8 @@ import (
 	"github.com/djedjethai/bankingSqlx/errs"
 	"github.com/djedjethai/bankingSqlx/logger"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
+	// "github.com/jmoiron/sqlx"
+	"strconv"
 )
 
 type TransactionRepositoryDb struct {
@@ -16,7 +17,7 @@ func NewTransactionRepositoryDb(client *sql.DB) TransactionRepositoryDb {
 	return TransactionRepositoryDb{client}
 }
 
-func (db TransactionRepositoryDb) UpdateTransactionTable(t Transaction) (string, errs.AppError) {
+func (db TransactionRepositoryDb) UpdateTransactionTable(t Transaction) (string, *errs.AppError) {
 	transactionSql := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) values (?, ?, ?, ?)"
 
 	var transactionId string

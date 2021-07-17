@@ -26,10 +26,13 @@ func (s *transactionHandlers) postTransaction(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	// link to the service part
 	transactionReq.AccountId = accountId
-	// service.Transaction.HandleTransaction(transactionReq) (dto.NewAccountResponse, errs.AppError) {
 
-}
+	dtoAccountResp, appErr := s.service.HandleTransaction(transactionReq)
+	if err != nil {
+		writeResponse(w, AppErr.Code, appErr.AsMessage())
+		return
+	}
 
+	writeResponse(w, http.StatusOk, dtoAccountResp)
 }
