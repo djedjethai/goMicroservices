@@ -11,5 +11,7 @@ type Transaction struct {
 }
 
 type TransactionRepository interface {
-	UpdateTransactionTable(Transaction) (string, errs.AppError)
+	UpdateTransactionTable(Transaction) (string, *errs.AppError)
+	GetBalance(string) (float64, *errs.AppError)
+	UpdateAccountAmount(float64, string) *errs.AppError
 }

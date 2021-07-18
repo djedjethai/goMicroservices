@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"database/sql"
 	"github.com/djedjethai/bankingSqlx/errs"
 	"github.com/djedjethai/bankingSqlx/logger"
 	"github.com/jmoiron/sqlx"
@@ -36,32 +35,4 @@ func (cl AccountRepositoryDb) Save(a Account) (*Account, *errs.AppError) {
 	a.AccountId = strconv.FormatInt(id, 10)
 
 	return &a, nil
-}
-
-func (cl AccountRepositoryDb) GetBalance(an string) (float64, *errs.AppError) {
-	balanceSql := "SELECT amount FROM accounts WHERE account_id = ?"
-
-	var balance float64
-	if err := cl.client.Get(&balance, balanceSql, an); err != nil {
-		if err == sql.ErrNoRows {
-			return balance, errs.NewBadRequestError("bad request from get balance")
-		} else {
-			logger.Error("err while scanning balance" + err.Error())
-			return balance, errs.NewInternalServerError("Unexpected database err")
-		}
-	}
-
-	return balance, nil
-}
-
-func (cl TransactionRepositoryDb) UpdateAccountAmount(na Transaction) *errs.AppError {
-	updateSql := "UPDATE accounts SET amount = ? WHERE account_id = ?"
-
-	_, err := cl.client.Exec(updateSql, na.Amount, na.AccountId)
-	if err != nil {
-		logger.Error("err while updating account" + err.Error())
-		return errs.NewInternalServerError("Unexpected database error")
-	}
-
-	return nil
 }

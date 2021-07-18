@@ -8,53 +8,44 @@ import (
 )
 
 type TransactionService interface {
-	HandleTransaction(dto.NewTransactionRequest) (dto.NewTransactionResponse, *errs.AppError)
-}
-
-type AccountRepository interface {
-	GetBalance(string) (float64, *errs.AppError)
-	UpdateAccountAmount(domain.Transaction) *errs.AppError
+	HandleTransaction(dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError)
 }
 
 type TransactionRepository interface {
-	RunTransaction()
-}
-
-type AccountRepository interface {
-	// add this 2 method to account serviceDb
-	GetBalance(string) (float64, errs.AppError)
-	UpdateAccountAmount(float64) errs.AppError
+	UpdateTransactionTable(domain.Transaction) (string, *errs.AppError)
+	GetBalance(string) (float64, *errs.AppError)
+	UpdateAccountAmount(float64, string) *errs.AppError
 }
 
 type transactionService struct {
-	transactionDb TransactionRepository
+	service TransactionRepository
 }
 
-func NewTransactionService(transacDb domain.Transaction) *TransactionService {
+func NewTransactionService(transacDb TransactionRepository) *transactionService {
 	return &transactionService{transacDb}
 }
 
-func (s *transactionService) HandleTransaction(t dto.NewTransactionRequest) (*dto.NewAccountResponse, *errs.AppError) {
+func (s *transactionService) HandleTransaction(t dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError) {
 
 	// req account balance from account service
-	balance, err := domain.GetBalance(t.AccountId)
+	balance, err := s.service.GetBalance(t.AccountId)
 	if err != nil {
 		return nil, err
 	}
 
 	var newAmount float64
-	if dt.TransactionType == "withdrawal" {
-		if balance < t.Amount {
-			return nil, errs.NewBadRequestError("Account found insufisant")
+	if t.TransactionType == "withdrawal" {
+		if err := t.Validate(balance); err != nil {
+			return nil, err
 		}
 		newAmount = balance - t.Amount
-	} else if dt.TransactionType == "deposit" {
+	} else if t.TransactionType == "deposit" {
 		newAmount = balance + t.Amount
 	} else {
 		return nil, errs.NewBadRequestError("wrong parameter")
 	}
 
-	if err := domain.UpdateAccountAmount(newAmount); err != nil {
+	if err := s.service.UpdateAccountAmount(newAmount, t.AccountId); err != nil {
 		return nil, errs.NewInternalServerError("Unexpected database error")
 	}
 
@@ -66,15 +57,15 @@ func (s *transactionService) HandleTransaction(t dto.NewTransactionRequest) (*dt
 		TransactionDate: time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	transactionId, err := domain.UpdateTransactionTable(dt)
+	transactionId, err := s.service.UpdateTransactionTable(dt)
 	if err != nil {
 		return nil, errs.NewInternalServerError("Unexpected database error")
 	}
 
 	dtoResp := dto.NewTransactionResponse{
-		Amount:        newAmout,
+		Amount:        newAmount,
 		TransactionId: transactionId,
 	}
 
-	return dtoResp, nil
+	return &dtoResp, nil
 }
