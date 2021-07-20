@@ -15,3 +15,11 @@ type TransactionRepository interface {
 	GetBalance(string) (float64, *errs.AppError)
 	UpdateAccountAmount(float64, string) *errs.AppError
 }
+
+func (t Transaction) CanNotWithdraw(amount float64) bool {
+	if t.Amount < amount {
+		return true
+	}
+
+	return false
+}
