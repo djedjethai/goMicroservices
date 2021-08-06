@@ -6,25 +6,28 @@ import (
 	// "regexp"
 )
 
-type I interface {
-	M()
+type speacker interface {
+	say()
 }
 
-type I2 interface {
-	N()
+type dog struct {
+	name string
 }
 
-type T struct{}
-
-func (T) M() {}
+func (d *dog) say() {
+	if d == nil {
+		fmt.Println("erererere")
+	} else {
+		fmt.Println(d.name)
+	}
+}
 
 func main() {
-	var v1 I = T{}
-	var v2 I2
-	v2, ok := v1.(I2)
-	if !ok {
-		fmt.Printf("%T %v\n", v2, v2)
-	}
+	var s speacker
+	var d *dog
+	s = d
+	s.say()
+	// fmt.Println(reflect.TypeOf(s))
 }
 
 // type I interface {

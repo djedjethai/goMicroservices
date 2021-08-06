@@ -46,11 +46,19 @@ func Start() {
 
 	// mux := http.NewServeMux() // standart http multiplexer
 	router := mux.NewRouter()
-	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
+	router.
+		HandleFunc("/customers", ch.getAllCustomers).
+		Methods(http.MethodGet)
 	// the regex make sure only int can be passed as param, but are string when mux extract
-	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.postAccount).Methods(http.MethodPost)
-	router.HandleFunc("/customers/transaction", th.postTransaction).Methods(http.MethodPost)
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).
+		Methods(http.MethodGet)
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.postAccount).
+		Methods(http.MethodPost)
+	router.
+		HandleFunc("/customers/transaction", th.postTransaction).
+		Methods(http.MethodPost)
 	// method masher
 	// router.HandleFunc("/greet", greet).Methods(http.MethodGet)
 	// req masher customer_id must be int
@@ -59,14 +67,10 @@ func Start() {
 	// router.HandleFunc("/customers/{customer_id:[0-9]+}", getCustomer).Methods(http.MethodGet)
 
 	// middleware
-	router.Use(func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// before
-			next.ServeHTTP(w, r)
-			// after
-		})
-	})
+	am := authMiddleware{domain.NewAuthRepository}
+	router.Use(am.authorizationHandler)
 
+	// starting server
 	address := os.Getenv("SERVER_ADDRESS")
 	port := os.Getenv("SERVER_PORT")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router))
