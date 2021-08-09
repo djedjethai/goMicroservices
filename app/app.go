@@ -48,17 +48,21 @@ func Start() {
 	router := mux.NewRouter()
 	router.
 		HandleFunc("/customers", ch.getAllCustomers).
-		Methods(http.MethodGet)
+		Methods(http.MethodGet).
+		Name("GetAllCustomers") // name to match the auth verification
 	// the regex make sure only int can be passed as param, but are string when mux extract
 	router.
 		HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).
-		Methods(http.MethodGet)
+		Methods(http.MethodGet).
+		Name("GetCustomer")
 	router.
 		HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.postAccount).
-		Methods(http.MethodPost)
+		Methods(http.MethodPost).
+		Name("NewAccount")
 	router.
 		HandleFunc("/customers/transaction", th.postTransaction).
-		Methods(http.MethodPost)
+		Methods(http.MethodPost).
+		Name("NewTransaction")
 	// method masher
 	// router.HandleFunc("/greet", greet).Methods(http.MethodGet)
 	// req masher customer_id must be int
@@ -67,8 +71,8 @@ func Start() {
 	// router.HandleFunc("/customers/{customer_id:[0-9]+}", getCustomer).Methods(http.MethodGet)
 
 	// middleware
-	am := authMiddleware{domain.NewAuthRepository}
-	router.Use(am.authorizationHandler)
+	am := authMiddleware{domain.NewAuthRepository()}
+	router.Use(am.authorizationHandler())
 
 	// starting server
 	address := os.Getenv("SERVER_ADDRESS")

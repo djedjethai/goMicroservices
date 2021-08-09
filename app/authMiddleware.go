@@ -27,8 +27,10 @@ func (a authMiddleware) authorizationHandler() func(http.Handler) http.Handler {
 				if isAuthorized {
 					next.ServeHTTP(w, r)
 				} else {
-					appErr := errs.AppError{http.StatusForbidden, "Unauthorized"}
-					writeResponse(w, appError.Code, appError.AsMessage())
+					appErr := errs.AppError{
+						Code:    http.StatusForbidden,
+						Message: "Unauthorized"}
+					writeResponse(w, appErr.Code, appErr.AsMessage())
 				}
 			} else {
 				writeResponse(w, http.StatusUnauthorized, "missing token")
