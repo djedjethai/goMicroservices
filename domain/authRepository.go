@@ -22,15 +22,18 @@ func (f RemoteAuthRepository) IsAuthorized(token string, routeName string, vars 
 	u := buildVerifyURL(token, routeName, vars)
 
 	if response, err := http.Get(u); err != nil {
-		fmt.Println("Error while sending..." + err.Error())
+		logger.Error("Query to verify token failed" + err.Error())
 		return false
 	} else {
+		logger.Info("response from auth authorize true.")
+
 		m := map[string]bool{}
 		if err = json.NewDecoder(response.Body).Decode(&m); err != nil {
 			logger.Error("Error while decoding response from auth server:" + err.Error())
 			return false
 		}
 
+		logger.Info("token has been authenticated true: " + fmt.Sprintf("%v", m))
 		return m["IsAuthorized"]
 	}
 }
@@ -48,10 +51,15 @@ func buildVerifyURL(token string, routeName string, vars map[string]string) stri
 	q := u.Query()
 	q.Add("token", token)
 	q.Add("routeName", routeName)
+
+	logger.Info("before range var: ")
+
 	for k, v := range vars {
 		q.Add(k, v)
 	}
 	u.RawQuery = q.Encode()
+
+	logger.Info("build url to verify token: " + u.String())
 
 	return u.String()
 }
