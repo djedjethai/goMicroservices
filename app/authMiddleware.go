@@ -1,8 +1,10 @@
 package app
 
 import (
+	"fmt"
 	"github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/errs"
+	"github.com/djedjethai/bankingSqlx/logger"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
@@ -19,8 +21,12 @@ func (a authMiddleware) authorizationHandler() func(http.Handler) http.Handler {
 			currentRouteVars := mux.Vars(r)
 			authHeader := r.Header.Get("Authorization")
 
+			logger.Info("see the vars from route: " + fmt.Sprintf("%v", currentRouteVars))
+
 			if authHeader != "" {
 				token := getTokenFromHeader(authHeader)
+
+				logger.Info("token in account route: " + token)
 
 				isAuthorized := a.repo.IsAuthorized(token, currentRoute.GetName(), currentRouteVars)
 

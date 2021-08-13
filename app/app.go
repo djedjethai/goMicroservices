@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/service"
+	// "github.com/djedjethai/bankingSqlx/logger"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"log"
