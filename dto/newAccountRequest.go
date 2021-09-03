@@ -17,7 +17,7 @@ func (ar NewAccountRequest) Validate() *errs.AppError {
 	}
 
 	if strings.ToLower(ar.AccountType) != "saving" && strings.ToLower(ar.AccountType) != "checking" {
-		return errs.NewValidationError("Account should be 'saving or 'saving' or 'checking'")
+		return errs.NewValidationError("Account should be 'saving' or 'checking'")
 	}
 
 	return nil
