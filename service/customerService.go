@@ -6,6 +6,11 @@ import (
 	"github.com/djedjethai/bankingSqlx/errs"
 )
 
+// go install github.com/golang/mock/mockgen@v1.6.0
+// go get github.com/golang/mock/mockgen/model
+// this command will generate the mocked function in the mock file (run from the root api)
+// go generate ./...
+//go:generate mockgen -destination=../mocks/service/mockCustomerService.go -package=service github.com/djedjethai/bankingSqlx/service CustomerService
 type CustomerService interface {
 	GetAllCustomer(string) ([]dto.CustomerResponse, *errs.AppError)
 	GetCustomer(string) (*dto.CustomerResponse, *errs.AppError)

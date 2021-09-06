@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_amount_newAccountRequest(t *testing.T) {
+func Test_wrong_amount_newAccountRequest(t *testing.T) {
 	// Arrange
 	request := NewAccountRequest{
 		AccountType: "saving",
@@ -24,7 +24,7 @@ func Test_amount_newAccountRequest(t *testing.T) {
 	}
 }
 
-func Test_type_of_account(t *testing.T) {
+func Test_wrong_type_of_account(t *testing.T) {
 	request := NewAccountRequest{
 		AccountType: "wrong type",
 		Amount:      5500,
@@ -34,5 +34,35 @@ func Test_type_of_account(t *testing.T) {
 
 	if AppErr.Message != "Account should be 'saving' or 'checking'" {
 		t.Error("Wrong type of account when testing NewAccountRequest")
+	}
+}
+func Test_saving_type_of_account(t *testing.T) {
+	// Arrange
+	request := NewAccountRequest{
+		AccountType: "saving",
+		Amount:      5500,
+	}
+
+	// Act
+	AppErr := request.Validate()
+
+	// Assert
+	if AppErr != nil {
+		t.Error("saving type of account is not reconize while testing NewAccountRequest ")
+	}
+}
+func Test_checking_type_of_account(t *testing.T) {
+	// Arrange
+	request := NewAccountRequest{
+		AccountType: "checking",
+		Amount:      5500,
+	}
+
+	// Act
+	AppErr := request.Validate()
+
+	// Assert
+	if AppErr != nil {
+		t.Error("checking type of account is not reconize while testing NewAccountRequest ")
 	}
 }
