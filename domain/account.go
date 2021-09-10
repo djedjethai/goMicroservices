@@ -14,6 +14,8 @@ type Account struct {
 	Status      string
 }
 
+//go:generate mockgen -destination=../mocks/domain/mockAccountRepository.go -package=domain github.com/djedjethai/bankingSqlx/domain AccountRepository
+// run the mock: go generate ./...
 type AccountRepository interface {
 	Save(Account) (*Account, *errs.AppError)
 }

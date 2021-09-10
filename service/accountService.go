@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+//go:generate mockgen -destination=../mocks/service/mockAccountService.go -package=service github.com/djedjethai/bankingSqlx/service AccountService
 type AccountService interface {
 	NewAccount(dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
 }
