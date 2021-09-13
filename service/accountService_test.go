@@ -96,11 +96,19 @@ func Test_should_return_new_account_if_new_account_has_been_created(t *testing.T
 		Status:      "1",
 	}
 	accountWithId := account
-	accountWithId. // a finir........
+	accountWithId.AccountId = "201"
 
-			mockRepo.EXPECT().Save(account).Return(nil, errs.NewInternalServerError("db error from test"))
+	mockRepo.EXPECT().Save(account).Return(&accountWithId, nil)
 
 	// Act
-	_, appErr := service.NewAccount(req)
+	newAccount, errApp := service.NewAccount(req)
 
+	// Assert
+	if errApp != nil {
+		t.Error("Error should be null when saving match account")
+	}
+
+	if newAccount.AccountId != accountWithId.AccountId {
+		t.Error("while testing 'should return newAccount' returned account should be same the created one")
+	}
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/dto"
 	"github.com/djedjethai/bankingSqlx/errs"
-	"time"
+	// "time"
 )
 
 //go:generate mockgen -destination=../mocks/service/mockAccountService.go -package=service github.com/djedjethai/bankingSqlx/service AccountService
@@ -30,21 +30,11 @@ func (s *defaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewA
 		return nil, err
 	}
 
-	a := domain.Account{
-		AccountId:   "",
-		CustomerId:  req.CustomerId,
-		OpeningDate: time.Now().Format("2006-01-02 15:04:05"),
-		AccountType: req.AccountType,
-		Amount:      req.Amount,
-		Status:      "1",
-	}
+	a := domain.CreateNewAccount(req.CustomerId, req.AccountType, req.Amount)
 
-	newAccount, err := s.repos.Save(a)
-	if err != nil {
+	if newAccount, err := s.repos.Save(a); err != nil {
 		return nil, err
+	} else {
+		return newAccount.ToNewAccountResponseDto(), nil
 	}
-
-	accountResp := newAccount.ToNewAccountResponseDto()
-
-	return &accountResp, nil
 }
