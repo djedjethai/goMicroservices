@@ -10,17 +10,28 @@ import (
 	"time"
 )
 
+// for accountService testing
 // const dbTSLayout = "2006-01-02 15:04:05"
 var mockRepo *domain.MockAccountRepository
 var service AccountService
 
+// for customerService testing
+var mockRepoCust *domain.MockCustomerRepository
+var custService CustomerService
+
 func setup(t *testing.T) func() {
+	// setting for accountService testing
 	ctrl := gomock.NewController(t)
 	mockRepo = domain.NewMockAccountRepository(ctrl)
 	service = NewAccountService(mockRepo)
 
+	// setting for customerService testing
+	mockRepoCust = domain.NewMockCustomerRepository(ctrl)
+	custService = NewService(mockRepoCust)
+
 	return func() {
 		service = nil
+		custService = nil
 		defer ctrl.Finish()
 	}
 }

@@ -14,6 +14,8 @@ type Customer struct {
 	Status      string
 }
 
+//go:generate mockgen -destination=../mocks/domain/mockCustomerRepository.go -package=domain github.com/djedjethai/bankingSqlx/domain CustomerRepository
+// run the mock: go generate ./...
 type CustomerRepository interface {
 	FindAll(string) ([]Customer, *errs.AppError)
 	ById(string) (*Customer, *errs.AppError)

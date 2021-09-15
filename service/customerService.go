@@ -40,6 +40,7 @@ func (s *defaultRepositoryService) GetAllCustomer(status string) ([]dto.Customer
 	}
 
 	var dtoc []dto.CustomerResponse
+	// lc, err := s.repos.FindAll(status)
 	lc, err := s.repos.FindAll(status)
 	if err != nil {
 		return dtoc, err
