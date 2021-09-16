@@ -3,8 +3,42 @@ package service
 import (
 	realDomain "github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/dto"
+	"github.com/djedjethai/bankingSqlx/errs"
 	"testing"
 )
+
+// test GetAllCustomer
+func Test_GetAllCustomer_should_return_from_db_allcustomers_if_argument_is_0(t *testing.T) {
+	tearDown := setup(t)
+	defer tearDown()
+
+	// Arrange
+	dummyCustomers := []realDomain.Customer{
+		{Id: "1001", Name: "Jeje", City: "paris", ZipCode: "75000", DateOfBirth: "2000-1-1", Status: "0"},
+	}
+	expectedOutput := []dto.CustomerResponse{
+		dto.CustomerResponse{
+			Id:          dummyCustomers[0].Id,
+			Name:        dummyCustomers[0].Name,
+			City:        dummyCustomers[0].City,
+			ZipCode:     dummyCustomers[0].ZipCode,
+			DateOfBirth: dummyCustomers[0].DateOfBirth,
+			Status:      dummyCustomers[0].Status,
+		},
+	}
+	mockRepoCust.EXPECT().FindAll("0").Return(dummyCustomers, nil)
+
+	// Act
+	outputFromService, err := custService.GetAllCustomer("inactive")
+
+	// Assert
+	if err != nil {
+		t.Error("While testing 'GetAllCustomer(1)', err should be null")
+	}
+	if expectedOutput[0].Id != outputFromService[0].Id {
+		t.Error("while testing 'GetAllCustomer(1)', customer output have wrong id")
+	}
+}
 
 func Test_GetAllCustomer_should_return_from_db_allcustomers_if_argument_is_1(t *testing.T) {
 	tearDown := setup(t)
@@ -85,98 +119,43 @@ func Test_GetAllCustomer_should_return_from_db_allcustomers_if_argument_is_empty
 	}
 }
 
-// func Test_GetAllCustomer_should_return_from_db_allcustomers_if_status_is_empty(t *testing.T) {
-// 	tearDown := setup(t)
-// 	defer tearDown()
-//
-// 	// Arrange
-// 	dummyCustomers := []realDomain.Customer{
-// 		{Id: "1001", Name: "Jeje", City: "paris", ZipCode: "75000", DateOfBirth: "2000-1-1", Status: "1"},
-// 		{Id: "1002", Name: "Anna", City: "Bkk", ZipCode: "10110", DateOfBirth: "2002-2-2", Status: "0"},
-// 	}
-//
-// 	mockRepoCust.EXPECT().FindAll("").Return(dummyCustomers, nil)
-//
-// 	// Act
-// 	custFromDb, err := mockRepoCust.FindAll("")
-//
-// 	// Assert
-// 	if err != nil {
-// 		t.Error("While testing 'GetAllCustomer', err should be null")
-// 	}
-//
-// 	if custFromDb[0].Id != "1001" {
-// 		t.Error("while testing 'GetAllCustomer', customer have wrong id")
-// 	}
-// 	if custFromDb[1].Id != "1002" {
-// 		t.Error("while testing 'GetAllCustomer', customer have wrong id")
-// 	}
-// }
+// test Getcustomer method
+func Test_GetCustomer_should_return_a_database_error(t *testing.T) {
+	tearDown := setup(t)
+	defer tearDown()
 
-// func Test_GetAllCustomer_should_return_empty_dtoCustomerResponse_if_err_from_db(t *testing.T) {
-//
-// }
-//
+	// Arrange
+	mockRepoCust.EXPECT().ById("1001").Return(nil, errs.NewInternalServerError("unexpected db err"))
 
-// func Test_GetAllCustomer_should_return_empty_dtoCustomerResponse_array_if_no_customer(t *testing.T) {
-// }
+	// Act
+	outputFromService, err := custService.GetCustomer("1001")
 
-// func Test_GetAllCustomer_should_return_dtoCustomerResponse_Array_if_status_is_empty_and_have_customers(t *testing.T) {
-//
-// 	// !!!!!!!!!!!!!!!
-// 	// SHOULD RETURN []dto.CustomerResponse
-//
-// 	tearDown := setup(t)
-// 	defer tearDown()
-//
-// 	// Arrange
-//
-//
-//
-// 	// dummyCustomers := []realDomain.Customer{
-// 	// 	{Id: "1001", Name: "Jeje", City: "paris", ZipCode: "75000", DateOfBirth: "2000-1-1", Status: "1"},
-// 	// 	{Id: "1002", Name: "Anna", City: "Bkk", ZipCode: "10110", DateOfBirth: "2002-2-2", Status: "0"},
-// 	// }
-//
-// 	mockRepoCust.EXPECT().FindAll("").Return(dummyCustomers, nil)
-//
-// 	// Act
-// 	custFromDb, err := mockRepoCust.FindAll("")
-//
-// 	// Assert
-// 	if err != nil {
-// 		t.Error("While testing 'GetAllCustomer', err should be null")
-// 	}
-//
-// 	if custFromDb[0].Id != "1001" {
-// 		t.Error("while testing 'GetAllCustomer', customer have wrong id")
-// 	}
-// 	if custFromDb[1].Id != "1002" {
-// 		t.Error("while testing 'GetAllCustomer', customer have wrong id")
-// 	}
-// }
+	// Assert
+	if err == nil {
+		t.Error("While testing 'GetCustomer' db err, err should not be null")
+	}
+	if outputFromService != nil {
+		t.Error("While testing 'GetCustomer' db err, output shoud be null")
+	}
+}
 
-// func Test_GetAllCustomer_should_return_from_db_custumer_with_status_1(t *testing.T) {
-// 	tearDown := setup(t)
-// 	defer tearDown()
-//
-// 	// Arrange
-// 	dummyCustomer := []realDomain.Customer{
-// 		{Id: "1001",
-// 			Name:        "Jeje",
-// 			City:        "paris",
-// 			ZipCode:     "75000",
-// 			DateOfBirth: "2000-1-1",
-// 			Status:      "1"},
-// 	}
-//
-// 	mockRepoCust.EXPECT().FindAll("1").Return(dummyCustomer, nil)
-//
-// 	// Act
-// 	ct, _ := mockRepoCust.FindAll("1")
-//
-// 	// Assert
-// 	if ct[0].Id != "1001" {
-// 		t.Error("while testing 'GetAllCustomer', customer have wrong id")
-// 	}
-// }
+func Test_GetCustomer_should_return_selected_customer(t *testing.T) {
+	tearDown := setup(t)
+	defer tearDown()
+
+	// Arrange
+	dummyCustomers := realDomain.Customer{Id: "1001", Name: "Jeje", City: "paris", ZipCode: "75000", DateOfBirth: "2000-1-1", Status: "1"}
+
+	mockRepoCust.EXPECT().ById("1001").Return(&dummyCustomers, nil)
+
+	// Act
+	outputFromService, err := custService.GetCustomer("1001")
+
+	// Assert
+	if err != nil {
+		t.Error("While testing 'GetCustomer' err should be null")
+	}
+	if dummyCustomers.Name != outputFromService.Name {
+		t.Error("While testing 'GetCustomer' name shoud match")
+	}
+}

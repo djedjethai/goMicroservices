@@ -11,20 +11,30 @@ import (
 	"testing"
 )
 
+// for customerHandler
 var router *mux.Router
 var mockService *service.MockCustomerService
 var ch customerHandlers
+
+// for accountHandler
+var mockServiceAccount *service.MockAccountService
+var ah accountHandlers
 
 func setup(t *testing.T) func() {
 	// Arrange
 	// the controller manage the state for the mock
 	ctrl := gomock.NewController(t)
+
+	// FOR CUSTOMERHANDLERS
 	// create the mock service
 	mockService = service.NewMockCustomerService(ctrl)
-
 	// define customer handler
 	// inject the mock service
 	ch = customerHandlers{mockService}
+
+	// FOR ACCOUNTHANDLERS
+	mockServiceAccount = service.NewMockAccountService(ctrl)
+	ah = accountHandlers{mockServiceAccount}
 
 	router = mux.NewRouter()
 	// router.HandleFunc("/customers", ch.getAllCustomers)
