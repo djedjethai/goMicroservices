@@ -25,6 +25,7 @@ func (s accountHandlers) postAccount(w http.ResponseWriter, r *http.Request) {
 
 	// add the customerId to na(new account) first
 	na.CustomerId = custId
+
 	accountResponse, appErr := s.service.NewAccount(na)
 	if appErr != nil {
 		writeResponse(w, appErr.Code, appErr.AsMessage())
