@@ -1,6 +1,9 @@
 package domain
 
-import "github.com/djedjethai/bankingSqlx/errs"
+import (
+	"github.com/djedjethai/bankingSqlx/dto"
+	"github.com/djedjethai/bankingSqlx/errs"
+)
 
 type Transaction struct {
 	TransactionId   string `json:"transaction_id"` // for sqlx to match to db column
@@ -10,10 +13,11 @@ type Transaction struct {
 	TransactionDate string `json:"transaction_date"`
 }
 
+//go:generate mockgen -destination=../mocks/domain/mockTransactionRepository.go -package=domain github.com/djedjethai/bankingSqlx/domain TransactionRepository
+// run the mock: go generate ./...
 type TransactionRepository interface {
-	UpdateTransactionTable(Transaction) (string, *errs.AppError)
+	RunTransaction(Transaction, float64) (*dto.NewTransactionResponse, *errs.AppError)
 	GetBalance(string) (float64, *errs.AppError)
-	UpdateAccountAmount(float64, string) *errs.AppError
 }
 
 func (t Transaction) CanNotWithdraw(amount float64) bool {

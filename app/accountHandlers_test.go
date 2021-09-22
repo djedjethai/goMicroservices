@@ -12,7 +12,32 @@ import (
 	"testing"
 )
 
-// func Test_account_handler_create_new_account_return_an_error_if_no_body_in_req(t *testing.T) {}
+func Test_account_handler_create_new_account_return_an_error_if_no_body_in_req(t *testing.T) {
+	tearDown := setup(t)
+	defer tearDown()
+
+	// Arrange
+	// set expected
+	na := dto.NewAccountRequest{CustomerId: "1001"}
+
+	// set router handler
+	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.postAccount)
+	// set http req
+	request, _ := http.NewRequest(http.MethodPost, "/customers/1001/account", strings.NewReader(`{}`))
+	mockServiceAccount.EXPECT().NewAccount(na).Return(nil, errs.NewValidationError("grrrruuu"))
+
+	// Act
+	recorder := httptest.NewRecorder()
+	println("grrr3")
+	router.ServeHTTP(recorder, request)
+	println("grrr4")
+
+	println("iiii: ", recorder.Code)
+	// Assert
+	if recorder.Code != http.StatusUnprocessableEntity {
+		t.Error("while testing create new account with no imput, err should not be null")
+	}
+}
 
 func Test_account_handler_create_new_account_should_return_an_error_if_wrong_input(t *testing.T) {
 	tearDown := setup(t)

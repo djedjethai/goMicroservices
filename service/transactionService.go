@@ -20,7 +20,7 @@ type transactionService struct {
 	service TransactionRepository
 }
 
-func NewTransactionService(transacDb TransactionRepository) *transactionService {
+func NewTransactionService(transacDb TransactionRepository) TransactionService {
 	return &transactionService{transacDb}
 }
 

@@ -19,6 +19,10 @@ var service AccountService
 var mockRepoCust *domain.MockCustomerRepository
 var custService CustomerService
 
+// for transactionService testing
+var mockRepoTransac *domain.MockTransactionRepository
+var transacService TransactionService
+
 func setup(t *testing.T) func() {
 	// setting for accountService testing
 	ctrl := gomock.NewController(t)
@@ -29,9 +33,14 @@ func setup(t *testing.T) func() {
 	mockRepoCust = domain.NewMockCustomerRepository(ctrl)
 	custService = NewService(mockRepoCust)
 
+	// setting for transactionService testing
+	mockRepoTransac = domain.NewMockTransactionRepository(ctrl)
+	transacService = NewTransactionService(mockRepoTransac)
+
 	return func() {
 		service = nil
 		custService = nil
+		transacService = nil
 		defer ctrl.Finish()
 	}
 }
