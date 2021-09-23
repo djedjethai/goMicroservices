@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// go generate ./...
+//go:generate mockgen -destination=../mocks/service/mockTransactionService.go -package=service github.com/djedjethai/bankingSqlx/service TransactionService
 type TransactionService interface {
 	HandleTransaction(dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError)
 }

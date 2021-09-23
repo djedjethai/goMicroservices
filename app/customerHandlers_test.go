@@ -20,6 +20,10 @@ var ch customerHandlers
 var mockServiceAccount *service.MockAccountService
 var ah accountHandlers
 
+// for transactionHandler
+var mockServiceTransaction *service.MockTransactionService
+var th transactionHandlers
+
 func setup(t *testing.T) func() {
 	// Arrange
 	// the controller manage the state for the mock
@@ -35,6 +39,10 @@ func setup(t *testing.T) func() {
 	// FOR ACCOUNTHANDLERS
 	mockServiceAccount = service.NewMockAccountService(ctrl)
 	ah = accountHandlers{mockServiceAccount}
+
+	// FOR TRANSACTIONHANDLERS
+	mockServiceTransaction = service.NewMockTransactionService(ctrl)
+	th = transactionHandlers{mockServiceTransaction}
 
 	router = mux.NewRouter()
 	// router.HandleFunc("/customers", ch.getAllCustomers)

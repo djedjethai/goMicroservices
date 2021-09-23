@@ -3,38 +3,28 @@ package app
 import (
 	"github.com/djedjethai/bankingSqlx/dto"
 	"github.com/djedjethai/bankingSqlx/errs"
-	// "github.com/djedjethai/bankingSqlx/mocks/service"
-	// "github.com/golang/mock/gomock"
-	// "github.com/gorilla/mux"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 )
 
-func Test_account_handler_create_new_account_return_an_error_if_no_body_in_req(t *testing.T) {
+func Test_account_handler_create_new_account_return_an_error_if_body_in_req_is_not_jsonFormat(t *testing.T) {
 	tearDown := setup(t)
 	defer tearDown()
 
 	// Arrange
-	// set expected
-	na := dto.NewAccountRequest{CustomerId: "1001"}
-
 	// set router handler
 	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.postAccount)
-	// set http req
-	request, _ := http.NewRequest(http.MethodPost, "/customers/1001/account", strings.NewReader(`{}`))
-	mockServiceAccount.EXPECT().NewAccount(na).Return(nil, errs.NewValidationError("grrrruuu"))
+	// set req
+	request, _ := http.NewRequest(http.MethodPost, "/customers/1001/account", strings.NewReader(""))
 
 	// Act
 	recorder := httptest.NewRecorder()
-	println("grrr3")
 	router.ServeHTTP(recorder, request)
-	println("grrr4")
 
-	println("iiii: ", recorder.Code)
 	// Assert
-	if recorder.Code != http.StatusUnprocessableEntity {
+	if recorder.Code != http.StatusBadRequest {
 		t.Error("while testing create new account with no imput, err should not be null")
 	}
 }
