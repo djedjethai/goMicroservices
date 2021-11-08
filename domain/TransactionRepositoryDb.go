@@ -2,9 +2,9 @@ package domain
 
 import (
 	"database/sql"
+	"github.com/djedjethai/bankingLib/errs"
+	"github.com/djedjethai/bankingLib/logger"
 	"github.com/djedjethai/bankingSqlx/dto"
-	"github.com/djedjethai/bankingSqlx/errs"
-	"github.com/djedjethai/bankingSqlx/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"strconv"

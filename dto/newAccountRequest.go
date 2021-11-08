@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"github.com/djedjethai/bankingSqlx/errs"
+	"github.com/djedjethai/bankingLib/errs"
 	"strings"
 )
 

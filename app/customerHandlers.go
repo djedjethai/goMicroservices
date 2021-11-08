@@ -3,7 +3,7 @@ package app
 import (
 	"encoding/json"
 	// "encoding/xml"
-	"github.com/djedjethai/bankingSqlx/logger"
+	"github.com/djedjethai/bankingLib/logger"
 	"github.com/djedjethai/bankingSqlx/service"
 	"github.com/gorilla/mux"
 	"net/http"

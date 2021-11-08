@@ -3,7 +3,7 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/djedjethai/bankingSqlx/logger"
+	"github.com/djedjethai/bankingLib/logger"
 	"net/http"
 	"net/url"
 )

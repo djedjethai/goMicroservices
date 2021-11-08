@@ -1,8 +1,8 @@
 package domain
 
 import (
+	"github.com/djedjethai/bankingLib/errs"
 	"github.com/djedjethai/bankingSqlx/dto"
-	"github.com/djedjethai/bankingSqlx/errs"
 )
 
 type Customer struct {

@@ -1,8 +1,8 @@
 package app
 
 import (
+	"github.com/djedjethai/bankingLib/errs"
 	"github.com/djedjethai/bankingSqlx/dto"
-	"github.com/djedjethai/bankingSqlx/errs"
 	"net/http"
 	"net/http/httptest"
 	"strings"

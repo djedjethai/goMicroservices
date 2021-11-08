@@ -1,8 +1,8 @@
 package app
 
 import (
+	"github.com/djedjethai/bankingLib/errs"
 	"github.com/djedjethai/bankingSqlx/dto"
-	"github.com/djedjethai/bankingSqlx/errs"
 	"github.com/djedjethai/bankingSqlx/mocks/service"
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/mux"
@@ -141,6 +141,9 @@ func Test_should_return_error_message_with_status_code_500(t *testing.T) {
 		t.Error("Testing '/customer' route, failed while testing StatusInternalServerError")
 	}
 }
+
+// FOR THE MOCK NEED TO INSTALL THE PACKAGE "GOMOCK"
+// go install github.com/golang/mock/mockgen@v1.6.0 (at this day)
 
 // func Test_should_return_customers_with_status_code_200(t *testing.T) {
 // 	// Arrange

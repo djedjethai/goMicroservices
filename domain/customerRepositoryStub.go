@@ -1,6 +1,6 @@
 package domain
 
-import "github.com/djedjethai/bankingSqlx/errs"
+import "github.com/djedjethai/bankingLib/errs"
 
 type CustomerRepositoryStub struct {
 	customers []Customer

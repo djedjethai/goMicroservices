@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/djedjethai/bankingLib/errs"
 	"github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/dto"
-	"github.com/djedjethai/bankingSqlx/errs"
 	// "time"
 )
 

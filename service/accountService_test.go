@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/djedjethai/bankingLib/errs"
 	realDomain "github.com/djedjethai/bankingSqlx/domain"
 	"github.com/djedjethai/bankingSqlx/dto"
-	"github.com/djedjethai/bankingSqlx/errs"
 	"github.com/djedjethai/bankingSqlx/mocks/domain"
 	"github.com/golang/mock/gomock"
 	"testing"

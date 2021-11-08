@@ -36,6 +36,7 @@ func Test_wrong_type_of_account(t *testing.T) {
 		t.Error("Wrong type of account when testing NewAccountRequest")
 	}
 }
+
 func Test_saving_type_of_account(t *testing.T) {
 	// Arrange
 	request := NewAccountRequest{
